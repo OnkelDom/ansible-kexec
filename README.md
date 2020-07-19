@@ -1,7 +1,7 @@
 # Ansible Role:
 
 [![License](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg)](https://opensource.org/licenses/MIT)
-[![GitHub tag](https://img.shields.io/github/tag/OnkelDom/ansible-node-exporter.svg)](https://github.com/OnkelDom/ansible-node-exporter/tags)
+[![GitHub tag](https://img.shields.io/github/tag/OnkelDom/ansible-role-kexec.svg)](https://github.com/OnkelDom/ansible-role-kexec/tags)
 [![GitHub issues](https://img.shields.io/github/issues/OnkelDom/ansible-role-kexec)](https://github.com/OnkelDom/ansible-role-kexec/issues)
 [![GitHub license](https://img.shields.io/github/license/OnkelDom/ansible-role-kexec)](https://github.com/OnkelDom/ansible-role-kexec/blob/master/LICENSE)
 
