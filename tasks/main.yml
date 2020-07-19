@@ -1,0 +1,49 @@
+---
+- name: install kexec and ksvalidator
+  package:
+    name: ['wget','kexec-tools','pykickstart']
+    state: present
+  become: true
+  tags: kexec
+
+- name: download vmlinuz and initrd
+  get_url:
+    url: "{{ kexec_ks_kickstarturl }}{{ item }}"
+    dest: "/{{ item }}"
+  with_items:
+  - initrd.img
+  - vmlinuz
+  become: true
+  tags: kexec
+
+- name: generate ks.cfg
+  template:
+    src: ks.cfg.j2
+    dest: /ks.cfg
+    validate: /usr/bin/ksvalidator %s
+  become: true
+  tags: kexec
+
+- name: move ks.cfg to initrd.img
+  shell: echo ks.cfg | cpio -c -o >> initrd.img
+  args:
+    chdir: /
+    executable: /bin/bash
+  become: true
+  tags: kexec
+
+- name: prepare kexec statement
+  shell: kexec -l vmlinuz --initrd=initrd.img --command-line='ip=dhcp inst.ks=file:/ks.cfg'
+  args:
+    chdir: /
+    executable: /bin/bash
+  become: true
+  tags: kexec
+
+- name: execute kexec
+  shell: kexec -e
+  args:
+    chdir: /
+    executable: /bin/bash
+  become: true
+  tags: kexec

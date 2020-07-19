@@ -1,0 +1,108 @@
+---
+# fedora or centos
+kexec_os_install: centos
+
+# os version, centos 7.6.1810 - centos 7.7.1908 doesnt work with ipv6, 8.1.1911
+kexec_os_centos_version: 8.2.2004
+
+# architecture
+kexec_os_arch: x86_64
+
+# define port for sshd agent
+kexec_sshd_port: 22
+
+# define root password
+kexec_ks_root_pass: "$1$TTCkItYV$T9ynqTURsryC4APnVorZe/" # pass: MySuperR00tP4assw0rd
+
+# define your timezone
+kexec_ks_timezone: Europe/Berlin
+
+# define your system language
+kexec_ks_system_lang: en_US.UTF-8
+
+# define keyboard layout:
+kexec_ks_keyboard_layout: us
+
+# SElinu state
+kexec_ks_selinux_state: permissive
+
+# Kickstart installation url
+kexec_ks_kickstarturl: "http://mirror.centos.org/centos/{{ kexec_os_centos_version }}/BaseOS/{{ kexec_os_arch }}/kickstart/isolinux/"
+
+# Network installation url
+kexec_ks_url:
+  url: "http://mirror.centos.org/centos/{{ kexec_os_centos_version }}/BaseOS/{{ kexec_os_arch }}/os/"
+  skip_verify_ssl: true
+  proxy: {}
+
+# Add repos for installation
+kexec_ks_repo:
+# EPEL CentOS 8
+  - name: epel
+    url: "http://dl.fedoraproject.org/pub/epel/8/{{ kexec_os_arch }}/"
+    save_to_disk: true
+
+kexec_ks_services:
+  enabled: "sshd,firewalld,chronyd"
+  disabled: {}
+
+# define your users
+kexec_ks_users:
+  - username: svc_ansible # pass: svc_ansible
+    groups: wheel
+    password: "$6$biO4a29mqIVZT0Sk$/IAlwjlcVJaPsABYMm1SZ/UjGfUOdk3s3oOKjPZ/4Qfr8MAkZiVbEfSJeGOtle/J3/Fw0c3beb7PnCr0HHBGp1"
+    id: 1000
+    ssh_key: "{{ lookup('file', '~/.ssh/id_rsa_ansible.pub') }}"
+
+# define your network
+#kexec_ks_network:
+#  hostname: srv01
+#  ipv4_address: "192.168.1.200"
+#  ipv4_netmask: "255.255.255.0"
+#  ipv4_gateway: "192.169.1.1"
+#  ipv4_nameservers: "192.168.1.1, 1.1.1.1"
+#  ipv6_address: "2a02:c207:3003:5312::1"
+#  ipv6_cidr: "64"
+#  ipv6_gateway: "fe80::1"
+kexec_ks_network:
+  hostname: "{{ ansible_hostname }}.{{ ansible_domain }}"
+  ipv4_address: "{{ ansible_default_ipv4.address }}"
+  ipv4_netmask: "{{ ansible_default_ipv4.netmask }}"
+  ipv4_gateway: "{{ ansible_default_ipv4.gateway }}"
+  ipv4_nameservers: "{{ ansible_dns.nameservers[0] }},{{ ansible_dns.nameservers[1] }}"
+  ipv6_address: "{{ ansible_default_ipv6.address }}"
+  ipv6_cidr: "{{ ansible_default_ipv6.prefix }}"
+  ipv6_gateway: "{{ ansible_default_ipv6.gateway }}"
+
+# define your volumes
+kexec_ks_pvs:
+  - name: pv.1
+    size: 8192
+    grow: true
+    ondrive: sda
+    crypt: false
+    crypt_pass: "SecureMyDisc"
+    volumegroups:
+      - name: system
+        logical_volumes:
+          - name: swap
+            size: 2048
+            path: swap
+          - name: root
+            size: 16384
+            fstype: xfs
+            path: /
+          - name: log
+            size: 5020
+            fstype: xfs
+            path: /var/log
+
+# add packages what you need. the epel repo is included in the install to install custom packages
+kexec_ks_packages:
+  - curl
+  - vim-enhanced
+  - sudo
+  - openssh-server
+  - ca-certificates
+  - openssl
+  - python3
