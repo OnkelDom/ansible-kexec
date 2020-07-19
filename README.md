@@ -1,4 +1,4 @@
-# Ansible Role:
+# Ansible Role: Kexec
 
 [![License](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![GitHub tag](https://img.shields.io/github/tag/OnkelDom/ansible-role-kexec.svg)](https://github.com/OnkelDom/ansible-role-kexec/tags)
